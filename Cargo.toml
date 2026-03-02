@@ -1,0 +1,13 @@
+[package]
+name = "emblize-py"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "emblize_py"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = "0.23.1"
+emblize = { path = "C:/Users/Unknown/OneDrive/Documentos/RustProjects/Lib/emblize", features = ["std"]}
