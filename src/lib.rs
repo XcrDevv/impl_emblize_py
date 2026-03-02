@@ -197,6 +197,8 @@ fn emblize_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<F32>()?;
     m.add_class::<F64>()?;
 
+    m.add_class::<Enum>()?;
+
     m.add_class::<TimestampMillis>()?;
     m.add_class::<TimestampMicros>()?;
     m.add_class::<MillisSinceBoot>()?;

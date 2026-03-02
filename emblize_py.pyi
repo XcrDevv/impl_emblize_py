@@ -49,6 +49,13 @@ class F64:
     inner: float
     def __init__(self, inner: float) -> None: ...
     
+# --------- Enum ---------
+    
+class Enum:
+    variant_index: int
+    inner: Any
+    def __init__(self, variant_index: int, inner: Any) -> None: ...
+    
 # --------- Array ---------
     
 class U8Arr:
