@@ -16,3 +16,24 @@ encoded_data = emblize.encode({
 
 data = emblize.decode(encoded_data)
 ```
+
+## To-do
+
+Right now Enums don't work properly, and even if they did, they would be difficult to use in Python.
+Therefore, a conceptual model such as this is proposed:
+
+```py
+@emblize.enum
+class E:
+    @emblize.variant(0)
+    class VariantA:
+        def __init__(self, u: int):
+            self.u = u
+        
+    @emblize.variant(1)
+    class VariantB:
+        def __init__(self, v: bool):
+            self.v = v
+
+decoded = emblize.decode(data, E)
+```
