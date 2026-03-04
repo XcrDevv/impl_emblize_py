@@ -70,13 +70,14 @@ define_vec_pyclass!(Quat, 4, x, y, z, w);
 #[pyclass]
 pub struct Enum {
     pub variant_index: u8,
-    pub inner: Py<PyAny>,
+    pub inner: Option<Py<PyAny>>,
 }
 
 #[pymethods]
 impl Enum {
     #[new]
-    pub fn new(variant_index: u8, value: Py<PyAny>) -> Self {
+    #[pyo3(signature = (variant_index, value=None))]
+    pub fn new(variant_index: u8, value: Option<Py<PyAny>>) -> Self {
         Self { variant_index, inner: value }
     } 
 }

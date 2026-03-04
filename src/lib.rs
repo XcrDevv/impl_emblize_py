@@ -1,10 +1,13 @@
 mod types;
+mod frame;
 
 use types::*;
 use std::borrow::Cow;
 use pyo3::{prelude::*, types::PyList};
 use pyo3::types::{PyBool, PyDict, PyFloat, PyInt};
 use emblize::core::token::Token;
+
+use crate::frame::StreamDecoder;
 
 macro_rules! impl_py_to_token {
     ($($ty:ident),*) => {
@@ -45,9 +48,10 @@ macro_rules! impl_py_to_token {
                     }
                 )*
                 v if v.is_instance_of::<Enum>() => {
-                    let py_ref: PyRef<Enum> = v.extract()?;
-                    let tk = py_to_token(py, &py_ref.inner.bind(py), name)?;
-                    Ok(tk)
+                    todo!();
+                    // let py_ref: PyRef<Enum> = v.extract()?;
+                    // let tk = py_to_token(py, &py_ref.inner.bind(py), name)?;
+                    // Ok(tk)
                 }
                 v if v.is_instance_of::<U8Arr>() => {
                     let py_ref: PyRef<U8Arr> = v.extract()?;
@@ -106,13 +110,14 @@ macro_rules! impl_token_to_py {
                     Ok(dict.into_pyobject(py)?.into_any())
                 }
 
-                Token::Enum(_, variant_index, value) => {
-                    let dict = PyDict::new(py);
-                    let idx = variant_index.into_pyobject(py)?;
-                    let v = token_to_py(value.as_ref(), py)?;
-                    dict.set_item("v_index".into_pyobject(py)?, idx)?;
-                    dict.set_item("value".into_pyobject(py)?, v)?;
-                    Ok(dict.into_pyobject(py)?.into_any())
+                Token::Enum(_, _variant_index, _value) => {
+                    todo!()
+                    // let dict = PyDict::new(py);
+                    // let idx = variant_index.into_pyobject(py)?;
+                    // let v = token_to_py(value.as_ref(), py)?;
+                    // dict.set_item("v_index".into_pyobject(py)?, idx)?;
+                    // dict.set_item("value".into_pyobject(py)?, v)?;
+                    // Ok(dict.into_pyobject(py)?.into_any())
                 }
                 Token::EmptyArr(_) => {
                     let empty: [u8; 0] = [];
@@ -186,7 +191,10 @@ fn emblize_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(encode, m)?)?;
     m.add_function(wrap_pyfunction!(decode, m)?)?;
 
+    m.add_class::<StreamDecoder>()?;
+
     m.add_class::<U8>()?;
+
     m.add_class::<U16>()?;
     m.add_class::<U32>()?;
     m.add_class::<U64>()?;

@@ -10,4 +10,4 @@ crate-type = ["cdylib"]
 
 [dependencies]
 pyo3 = "0.23.1"
-emblize = { path = "C:/Users/Unknown/OneDrive/Documentos/RustProjects/Lib/emblize", features = ["std"]}
+emblize = { path = "C:/Users/Unknown/OneDrive/Documentos/RustProjects/Lib/emblize", features = ["std", "frame"] }
