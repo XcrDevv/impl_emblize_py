@@ -1,6 +1,7 @@
 mod types;
 mod frame;
 
+use pyo3::IntoPyObjectExt;
 use types::*;
 use std::borrow::Cow;
 use pyo3::{prelude::*, types::PyList};
@@ -48,10 +49,13 @@ macro_rules! impl_py_to_token {
                     }
                 )*
                 v if v.is_instance_of::<Enum>() => {
-                    todo!();
-                    // let py_ref: PyRef<Enum> = v.extract()?;
-                    // let tk = py_to_token(py, &py_ref.inner.bind(py), name)?;
-                    // Ok(tk)
+                    let py_ref: PyRef<Enum> = v.extract()?;
+                    if let Some(inner) = &py_ref.inner {
+                        let tk = py_to_token(py, &inner.bind(py), None)?;
+                        Ok(Token::Enum(name, py_ref.variant_index, Some(Box::new(tk))))
+                    } else {
+                        Ok(Token::Enum(name, py_ref.variant_index, None))
+                    }
                 }
                 v if v.is_instance_of::<U8Arr>() => {
                     let py_ref: PyRef<U8Arr> = v.extract()?;
@@ -110,14 +114,13 @@ macro_rules! impl_token_to_py {
                     Ok(dict.into_pyobject(py)?.into_any())
                 }
 
-                Token::Enum(_, _variant_index, _value) => {
-                    todo!()
-                    // let dict = PyDict::new(py);
-                    // let idx = variant_index.into_pyobject(py)?;
-                    // let v = token_to_py(value.as_ref(), py)?;
-                    // dict.set_item("v_index".into_pyobject(py)?, idx)?;
-                    // dict.set_item("value".into_pyobject(py)?, v)?;
-                    // Ok(dict.into_pyobject(py)?.into_any())
+                Token::Enum(_, index, value) => {
+                    if let Some(value) = value {
+                        let v = token_to_py(value.as_ref(), py)?;
+                        Ok(Enum {variant_index: *index, inner: Some(v.unbind().into_any()) }.into_bound_py_any(py)?)
+                    } else {
+                        Ok(Enum {variant_index: *index, inner: None }.into_bound_py_any(py)?)
+                    }
                 }
                 Token::EmptyArr(_) => {
                     let empty: [u8; 0] = [];

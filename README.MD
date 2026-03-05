@@ -22,6 +22,8 @@ data = emblize.decode(encoded_data)
 Right now Enums don't work properly, and even if they did, they would be difficult to use in Python.
 Therefore, a conceptual model such as this is proposed:
 
+Note: This is gonna take a while.
+
 ```py
 @emblize.enum
 class E:
