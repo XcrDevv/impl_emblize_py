@@ -5,7 +5,7 @@ use pyo3::IntoPyObjectExt;
 use types::*;
 use std::borrow::Cow;
 use pyo3::{prelude::*, types::PyList};
-use pyo3::types::{PyBool, PyDict, PyFloat, PyInt};
+use pyo3::types::{PyBool, PyDict, PyFloat, PyInt, PyNone};
 use emblize::core::token::Token;
 
 use crate::frame::StreamDecoder;
@@ -22,6 +22,14 @@ macro_rules! impl_py_to_token {
                         tokens.push(py_to_token(py, &value, Some(k))?);
                     }
                     Ok(Token::Struct(name, tokens))
+                }
+                v if v.is_instance_of::<PyNone>() => {
+                    Ok(Token::Option(name, None))
+                }
+                v if v.is_instance_of::<SomeValue>() => {
+                    let py_ref: PyRef<SomeValue> = v.extract()?;
+                    let tk = py_to_token(py, &py_ref.inner.bind(py), None)?;
+                    Ok(Token::Option(name, Some(Box::new(tk))))
                 }
                 v if v.is_instance_of::<PyBool>() => {
                     let b: bool = v.extract()?;
@@ -122,6 +130,14 @@ macro_rules! impl_token_to_py {
                         Ok(Enum {variant_index: *index, inner: None }.into_bound_py_any(py)?)
                     }
                 }
+                Token::Option(_, value) => {
+                    if let Some(value) = value {
+                        let v = token_to_py(value.as_ref(), py)?;
+                        Ok(v.into_bound_py_any(py)?)
+                    } else {
+                        Ok(PyNone::get(py).into_bound_py_any(py)?)
+                    }
+                }
                 Token::EmptyArr(_) => {
                     let empty: [u8; 0] = [];
                     Ok(empty.into_pyobject(py)?.to_owned().into_any())
@@ -209,6 +225,7 @@ fn emblize_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<F64>()?;
 
     m.add_class::<Enum>()?;
+    m.add_class::<SomeValue>()?;
 
     m.add_class::<TimestampMillis>()?;
     m.add_class::<TimestampMicros>()?;

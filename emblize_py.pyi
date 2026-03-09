@@ -56,6 +56,12 @@ class Enum:
     inner: Any
     def __init__(self, variant_index: int, inner: Any) -> None: ...
     
+# --------- Option ---------
+
+class Enum:
+    inner: Any
+    def __init__(self, inner: Any) -> None: ...
+    
 # --------- Array ---------
     
 class U8Arr:

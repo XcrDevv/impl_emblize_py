@@ -73,11 +73,24 @@ pub struct Enum {
     pub inner: Option<Py<PyAny>>,
 }
 
+#[pyclass(name = "Some")]
+pub struct SomeValue {
+    pub inner: Py<PyAny>
+}
+
+#[pymethods]
+impl SomeValue {
+    #[new]
+    pub fn new(value: Py<PyAny>) -> Self {
+        Self { inner: value }
+    } 
+}
+
 #[pymethods]
 impl Enum {
     #[new]
     #[pyo3(signature = (variant_index, value=None))]
     pub fn new(variant_index: u8, value: Option<Py<PyAny>>) -> Self {
         Self { variant_index, inner: value }
-    } 
+    }
 }
