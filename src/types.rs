@@ -4,6 +4,7 @@ macro_rules! define_pyclass {
     ($name:ident, $type:ty) => {
         #[pyclass(frozen)]
         pub struct $name {
+            #[pyo3(get)]
             pub inner: $type,
         }
 
@@ -21,6 +22,7 @@ macro_rules! define_vec_pyclass {
     ($name:ident, $size:expr, $( $field:ident ),+ ) => {
         #[pyclass(frozen)]
         pub struct $name {
+            #[pyo3(get)]
             pub inner: [f32; $size],
         }
 
@@ -69,7 +71,10 @@ define_vec_pyclass!(Quat, 4, x, y, z, w);
 
 #[pyclass]
 pub struct Enum {
+    #[pyo3(get)]
     pub variant_index: u8,
+
+    #[pyo3(get)]
     pub inner: Option<Py<PyAny>>,
 }
 
