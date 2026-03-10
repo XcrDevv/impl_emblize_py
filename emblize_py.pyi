@@ -58,7 +58,7 @@ class Enum:
     
 # --------- Option ---------
 
-class Enum:
+class Some:
     inner: Any
     def __init__(self, inner: Any) -> None: ...
     
