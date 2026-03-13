@@ -24,12 +24,12 @@ macro_rules! impl_py_to_token {
                     Ok(Token::Struct(name, tokens))
                 }
                 v if v.is_instance_of::<PyNone>() => {
-                    Ok(Token::Option(name, None))
+                    Ok(Token::None(name))
                 }
                 v if v.is_instance_of::<SomeValue>() => {
                     let py_ref: PyRef<SomeValue> = v.extract()?;
                     let tk = py_to_token(py, &py_ref.inner.bind(py), None)?;
-                    Ok(Token::Option(name, Some(Box::new(tk))))
+                    Ok(Token::Some(name, Box::new(tk)))
                 }
                 v if v.is_instance_of::<PyBool>() => {
                     let b: bool = v.extract()?;
@@ -130,13 +130,12 @@ macro_rules! impl_token_to_py {
                         Ok(Enum {variant_index: *index, inner: None }.into_bound_py_any(py)?)
                     }
                 }
-                Token::Option(_, value) => {
-                    if let Some(value) = value {
-                        let v = token_to_py(value.as_ref(), py)?;
-                        Ok(v.into_bound_py_any(py)?)
-                    } else {
-                        Ok(PyNone::get(py).into_bound_py_any(py)?)
-                    }
+                Token::Some(_, value) => {
+                    let v = token_to_py(value.as_ref(), py)?;
+                    Ok(v.into_bound_py_any(py)?)
+                } 
+                Token::None(_) => {
+                    Ok(PyNone::get(py).into_bound_py_any(py)?)
                 }
                 Token::EmptyArr(_) => {
                     let empty: [u8; 0] = [];
