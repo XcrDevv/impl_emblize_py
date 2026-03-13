@@ -23,6 +23,7 @@ checksum = "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
 [[package]]
 name = "emblize"
 version = "0.1.0"
+source = "git+https://github.com/XcrDevv/Emblize?rev=acb6cb5#acb6cb5c6e1184593a9525ddf5a47794357af254"
 dependencies = [
  "heapless",
  "num_enum",
