@@ -1,4 +1,4 @@
-from typing import Any, Sequence
+from typing import Any
 
 def decode(bytes: bytes) -> Any:
     ...
@@ -8,6 +8,8 @@ def encode(obj: Any) -> bytes:
     
 # Class definitions
 # --------- Scalar ---------
+
+class Infer: pass
     
 class U8:
     inner: int
@@ -62,32 +64,6 @@ class Some:
     inner: Any
     def __init__(self, inner: Any) -> None: ...
     
-# --------- Array ---------
-    
-class U8Arr:
-    inner: Sequence[int]
-    def __init__(self, inner: Sequence[int]) -> None: ...
-
-class I32Arr:
-    inner: Sequence[int]
-    def __init__(self, inner: Sequence[int]) -> None: ...
-
-class I64Arr:
-    inner: Sequence[int]
-    def __init__(self, inner: Sequence[int]) -> None: ...
-
-class F32Arr:
-    inner: Sequence[float]
-    def __init__(self, inner: Sequence[float]) -> None: ...
-
-class F64Arr:
-    inner: Sequence[float]
-    def __init__(self, inner: Sequence[float]) -> None: ...
-
-class StrArr:
-    inner: Sequence[str]
-    def __init__(self, inner: Sequence[str]) -> None: ...
-    
 # --------- Time ---------
     
 class TimestampMillis:
@@ -114,19 +90,25 @@ class DurationMicros:
     inner: int
     def __init__(self, inner: int) -> None: ...
     
+# --------- Array ---------
+
+class Array:
+    inner: list[Any]
+    def __init__(self, inner: list[Any], dtype) -> None: ...
+    
 # --------- Vector ---------
     
 class Vec2:
     inner: tuple[float, float]
-    def __init__(self, x: float, y: float) -> None: ...
+    def __init__(self, x: float, y: float, dtype) -> None: ...
 
 class Vec3:
     inner: tuple[float, float, float]
-    def __init__(self, x: float, y: float, z: float) -> None: ...
+    def __init__(self, x: float, y: float, z: float, dtype) -> None: ...
 
 class Vec4:
     inner: tuple[float, float, float, float]
-    def __init__(self, x: float, y: float, z: float, w: float) -> None: ...
+    def __init__(self, x: float, y: float, z: float, w: float, dtype) -> None: ...
 
 class Quat:
     inner: tuple[float, float, float, float]

@@ -23,15 +23,19 @@ macro_rules! define_vec_pyclass {
         #[pyclass(frozen)]
         pub struct $name {
             #[pyo3(get)]
-            pub inner: [f32; $size],
+            pub inner: [f64; $size],
+
+            #[pyo3(get)]
+            pub dtype: Py<PyAny>
         }
 
         #[pymethods]
         impl $name {
             #[new]
-            pub fn new($( $field: f32 ),+) -> Self {
+            pub fn new($( $field: f64 ),+, dtype: Py<PyAny>) -> Self {
                 Self {
                     inner: [$( $field ),+],
+                    dtype
                 }
             }
         }
@@ -57,19 +61,11 @@ define_pyclass!(MicrosSinceBoot, u64);
 define_pyclass!(DurationMillis, i64);
 define_pyclass!(DurationMicros, i64);
 
-define_pyclass!(U8Arr, Vec<u8>);
-define_pyclass!(I32Arr, Vec<i32>);
-define_pyclass!(I64Arr, Vec<i64>);
-define_pyclass!(F32Arr, Vec<f32>);
-define_pyclass!(F64Arr, Vec<f64>);
-define_pyclass!(StrArr, Vec<String>);
-
 define_vec_pyclass!(Vec2, 2, x, y);
 define_vec_pyclass!(Vec3, 3, x, y, z);
 define_vec_pyclass!(Vec4, 4, x, y, z, w);
-define_vec_pyclass!(Quat, 4, x, y, z, w);
 
-#[pyclass]
+#[pyclass(frozen)]
 pub struct Enum {
     #[pyo3(get)]
     pub variant_index: u8,
@@ -78,7 +74,7 @@ pub struct Enum {
     pub inner: Option<Py<PyAny>>,
 }
 
-#[pyclass(name = "Some")]
+#[pyclass(name = "Some", frozen)]
 pub struct SomeValue {
     pub inner: Py<PyAny>
 }
@@ -97,5 +93,22 @@ impl Enum {
     #[pyo3(signature = (variant_index, value=None))]
     pub fn new(variant_index: u8, value: Option<Py<PyAny>>) -> Self {
         Self { variant_index, inner: value }
+    }
+}
+
+#[pyclass(frozen)]
+pub struct Array {
+    #[pyo3(get)]
+    pub inner: Vec<Py<PyAny>>,
+
+    #[pyo3(get)]
+    pub dtype: Py<PyAny>
+}
+
+#[pymethods]
+impl Array {
+    #[new]
+    pub fn new(values: Vec<Py<PyAny>>, dtype: Py<PyAny>) -> Self {
+        Self { inner: values, dtype }
     }
 }

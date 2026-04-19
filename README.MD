@@ -1,3 +1,5 @@
+`unstable!`
+
 # Usage
 
 ```py
@@ -17,25 +19,25 @@ encoded_data = emblize.encode({
 data = emblize.decode(encoded_data)
 ```
 
-## To-do
+## Sequence
 
-Right now Enums don't work properly, and even if they did, they would be difficult to use in Python.
-Therefore, a conceptual model such as this is proposed:
-
-Note: This is gonna take a while.
+Arrays and Vec require an explicit `dtype` to determine how elements are encoded.
+All elements must be of the same type — heterogeneous arrays are not supported.
 
 ```py
-@emblize.enum
-class E:
-    @emblize.variant(0)
-    class VariantA:
-        def __init__(self, u: int):
-            self.u = u
-        
-    @emblize.variant(1)
-    class VariantB:
-        def __init__(self, v: bool):
-            self.v = v
+# Numeric arrays: elements are plain Python values, dtype carries the type info
+encoded = emblize.encode(emblize.Array([10, 5, 2], dtype=emblize.U8))
 
-decoded = emblize.decode(data, E)
+# String arrays
+encoded = emblize.encode(emblize.Array(["hello", "world"], dtype=str))
+
+# Struct arrays
+encoded = emblize.encode(emblize.Array([
+    {"id": emblize.U8(1)},
+    {"id": emblize.U8(2)},
+], dtype=dict))
 ```
+
+> [!NOTE]
+> `dtype` is always required. Even for types with a single representation
+> like `str`, the format does not infer the element type automatically.

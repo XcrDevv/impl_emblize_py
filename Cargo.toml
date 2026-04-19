@@ -10,4 +10,4 @@ crate-type = ["cdylib"]
 
 [dependencies]
 pyo3 = "0.23.1"
-emblize = { git = "https://github.com/XcrDevv/Emblize", rev = "acb6cb5", features = ["std", "frame"] }
+emblize = { git = "https://github.com/XcrDevv/Emblize", rev = "b2ef598", features = ["frame"] }
