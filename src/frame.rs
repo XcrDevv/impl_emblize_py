@@ -4,7 +4,7 @@ use pyo3::prelude::*;
 use crate::decode;
 
 #[pyclass]
-pub struct StreamDecoder{
+pub struct StreamDecoder {
     parser: FrameParser<'static, Vec<u8>>,
     out_buf_size: usize,
 }

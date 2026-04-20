@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, TypeVar
 
 def decode(bytes: bytes) -> Any:
     ...
@@ -113,3 +113,13 @@ class Vec4:
 class Quat:
     inner: tuple[float, float, float, float]
     def __init__(self, x: float, y: float, z: float, w: float) -> None: ...
+
+# Stream Decoder
+# --------- Decoder ---------
+
+T = TypeVar("T")
+
+class StreamDecoder:
+    def __init__(self, size: int, sync: bytes) -> None: ...
+    
+    def push[T](self, data: bytes) -> list[T]: ...
