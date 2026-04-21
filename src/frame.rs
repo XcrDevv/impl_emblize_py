@@ -35,6 +35,9 @@ impl StreamDecoder {
             second[..m].copy_from_slice(&bytes[n..n+m]);
         }
 
+
+        self.parser.advance(bytes.len());
+
         let mut out = vec![0; self.out_buf_size];
         while let Some(length) = self.parser.poll_frame(&mut out) {
             decoded_frames.push(decode(&out[..length])?);
